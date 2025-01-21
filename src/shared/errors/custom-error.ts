@@ -1,3 +1,5 @@
+import { StatusCodes } from '@/config/status-codes';
+
 export class CustomError extends Error {
   constructor(
     public readonly message: string,
@@ -8,34 +10,34 @@ export class CustomError extends Error {
   }
 
   static badRequest(message: string): CustomError {
-    return new CustomError(message, 400);
+    return new CustomError(message, StatusCodes.BadRequest);
   }
 
   static notFound(message: string): CustomError {
-    return new CustomError(message, 404);
+    return new CustomError(message, StatusCodes.NotFound);
   }
 
   static conflict(message: string): CustomError {
-    return new CustomError(message, 409);
+    return new CustomError(message, StatusCodes.Conflict);
   }
 
   static unauthorized(message: string): CustomError {
-    return new CustomError(message, 401);
+    return new CustomError(message, StatusCodes.Unauthorized);
   }
 
   static forbidden(message: string): CustomError {
-    return new CustomError(message, 403);
+    return new CustomError(message, StatusCodes.Forbidden);
   }
 
   static internal(message: string = 'Internal Server Error'): CustomError {
-    return new CustomError(message, 500);
+    return new CustomError(message, StatusCodes.InternalServerError);
   }
 
   static serviceUnavailable(message: string): CustomError {
-    return new CustomError(message, 503);
+    return new CustomError(message, StatusCodes.ServiceUnavailable);
   }
 
   static gatewayTimeout(message: string): CustomError {
-    return new CustomError(message, 504);
+    return new CustomError(message, StatusCodes.GatewayTimeout);
   }
 }

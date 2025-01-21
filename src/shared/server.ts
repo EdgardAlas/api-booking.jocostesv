@@ -1,3 +1,5 @@
+import { CorsMiddleware } from '@/shared/middlewares/cors.middleware';
+import { LoggerMiddleware } from '@/shared/middlewares/logger.middleware';
 import { Application, Router } from 'express';
 import express from 'express';
 
@@ -19,6 +21,9 @@ export class Server {
   }
 
   async start() {
+    this.app.use(CorsMiddleware.middleware);
+    this.app.use(LoggerMiddleware.middleware);
+
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
 
@@ -29,4 +34,3 @@ export class Server {
     });
   }
 }
-
