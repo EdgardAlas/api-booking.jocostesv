@@ -53,6 +53,7 @@ model payment {
 model service_schedule {
   id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   service_id        String              @db.Uuid
+  user_id           String              @db.Uuid
   gap               String
   start_day         day
   end_day           day
@@ -63,12 +64,14 @@ model service_schedule {
   bookings          bookings[]
   no_available_date no_available_date[]
   services          services            @relation(fields: [service_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users             users               @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  @@unique([service_id, start_time, end_time])
+  @@unique([service_id, user_id, start_time, end_time])
 }
 
 model services {
   id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  company_id       String             @db.Uuid
   name             String             @unique @db.VarChar(50)
   description      String
   price            Decimal            @db.Decimal(10, 2)
@@ -77,22 +80,72 @@ model services {
   created_at       DateTime?          @default(now()) @db.Timestamp(6)
   updated_at       DateTime?          @default(now()) @db.Timestamp(6)
   service_schedule service_schedule[]
+  companies        companies          @relation(fields: [company_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model users {
-  id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name          String          @db.VarChar(50)
-  email         String          @db.VarChar(100)
-  password      String?         @db.VarChar(100)
-  role          role            @default(user)
-  phone         String          @db.VarChar(20)
-  provider      provider        @default(email)
-  created_at    DateTime?       @default(now()) @db.Timestamp(6)
-  updated_at    DateTime?       @default(now()) @db.Timestamp(6)
-  bookings      bookings[]
-  notifications notifications[]
+  id                   String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                 String             @db.VarChar(50)
+  email                String             @db.VarChar(100)
+  password             String?            @db.VarChar(100)
+  phone                String             @db.VarChar(20)
+  provider             provider           @default(email)
+  account_status       account_status     @default(active)
+  created_at           DateTime?          @default(now()) @db.Timestamp(6)
+  updated_at           DateTime?          @default(now()) @db.Timestamp(6)
+  reset_password_token String?
+  bookings             bookings[]
+  notifications        notifications[]
+  service_schedule     service_schedule[]
+  users_companies      users_companies[]
 
   @@unique([email, provider])
+}
+
+model companies {
+  id              String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String            @unique @db.VarChar(100)
+  created_at      DateTime?         @default(now()) @db.Timestamp(6)
+  updated_at      DateTime?         @default(now()) @db.Timestamp(6)
+  invitations     invitations[]
+  services        services[]
+  subscriptions   subscriptions[]
+  users_companies users_companies[]
+}
+
+model invitations {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  company_id String    @db.Uuid
+  email      String    @db.VarChar(100)
+  role       role
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  companies  companies @relation(fields: [company_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([company_id, email])
+}
+
+model subscriptions {
+  id                  String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  company_id          String              @db.Uuid
+  plan                String              @db.VarChar(50)
+  start_date          DateTime            @db.Timestamp(6)
+  next_renewal        DateTime            @db.Timestamp(6)
+  recurrence_interval recurrence_interval
+  status              Boolean             @default(true)
+  created_at          DateTime?           @default(now()) @db.Timestamp(6)
+  updated_at          DateTime?           @default(now()) @db.Timestamp(6)
+  companies           companies           @relation(fields: [company_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model users_companies {
+  user_id    String    @db.Uuid
+  company_id String    @db.Uuid
+  role       role
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  companies  companies @relation(fields: [company_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users      users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([user_id, company_id])
 }
 
 enum booking_status {
@@ -128,7 +181,16 @@ enum provider {
 }
 
 enum role {
-  admin
-  user
   owner
+  staff
+}
+
+enum account_status {
+  active
+  blocked
+}
+
+enum recurrence_interval {
+  monthly
+  yearly
 }

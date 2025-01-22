@@ -12,7 +12,8 @@
     "lint:check": "eslint .",
     "lint:fix": "eslint --fix .",
     "db-pull": "prisma db pull",
-    "db-generate": "prisma generate"
+    "db-generate": "prisma generate",
+    "db-pg": "pnpm db-pull && pnpm db-generate"
   },
   "engines": {
     "node": ">=22.0.0"
