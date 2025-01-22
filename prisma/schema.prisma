@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model bookings {
+  id                  String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id             String           @db.Uuid
+  service_schedule_id String           @db.Uuid
+  datetime            DateTime         @db.Timestamp(6)
+  status              booking_status   @default(pending)
+  created_at          DateTime?        @default(now()) @db.Timestamp(6)
+  updated_at          DateTime?        @default(now()) @db.Timestamp(6)
+  service_schedule    service_schedule @relation(fields: [service_schedule_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users               users            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  payment             payment[]
+}
+
+model no_available_date {
+  id                  String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  service_schedule_id String           @db.Uuid
+  datetime            DateTime         @db.Timestamp(6)
+  created_at          DateTime?        @default(now()) @db.Timestamp(6)
+  updated_at          DateTime?        @default(now()) @db.Timestamp(6)
+  service_schedule    service_schedule @relation(fields: [service_schedule_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model notifications {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String    @db.Uuid
+  message    String
+  url        String?
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  updated_at DateTime? @default(now()) @db.Timestamp(6)
+  users      users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model payment {
+  id         String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  booking_id String         @db.Uuid
+  status     payment_status @default(pending)
+  datetime   DateTime       @default(now()) @db.Timestamp(6)
+  method     payment_method @default(cash)
+  created_at DateTime?      @default(now()) @db.Timestamp(6)
+  updated_at DateTime?      @default(now()) @db.Timestamp(6)
+  bookings   bookings       @relation(fields: [booking_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model service_schedule {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  service_id        String              @db.Uuid
+  gap               String
+  start_day         day
+  end_day           day
+  start_time        DateTime            @db.Time(6)
+  end_time          DateTime            @db.Time(6)
+  created_at        DateTime?           @default(now()) @db.Timestamp(6)
+  updated_at        DateTime?           @default(now()) @db.Timestamp(6)
+  bookings          bookings[]
+  no_available_date no_available_date[]
+  services          services            @relation(fields: [service_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([service_id, start_time, end_time])
+}
+
+model services {
+  id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String             @unique @db.VarChar(50)
+  description      String
+  price            Decimal            @db.Decimal(10, 2)
+  image            String
+  status           Boolean            @default(true)
+  created_at       DateTime?          @default(now()) @db.Timestamp(6)
+  updated_at       DateTime?          @default(now()) @db.Timestamp(6)
+  service_schedule service_schedule[]
+}
+
+model users {
+  id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String          @db.VarChar(50)
+  email         String          @db.VarChar(100)
+  password      String?         @db.VarChar(100)
+  role          role            @default(user)
+  phone         String          @db.VarChar(20)
+  provider      provider        @default(email)
+  created_at    DateTime?       @default(now()) @db.Timestamp(6)
+  updated_at    DateTime?       @default(now()) @db.Timestamp(6)
+  bookings      bookings[]
+  notifications notifications[]
+
+  @@unique([email, provider])
+}
+
+enum booking_status {
+  pending
+  confirmed
+  cancelled
+}
+
+enum day {
+  monday
+  tuesday
+  wednesday
+  thursday
+  friday
+  saturday
+  sunday
+}
+
+enum payment_method {
+  cash
+  online
+}
+
+enum payment_status {
+  pending
+  paid
+  failed
+}
+
+enum provider {
+  google
+  email
+}
+
+enum role {
+  admin
+  user
+  owner
+}
