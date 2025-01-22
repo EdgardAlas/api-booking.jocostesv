@@ -1,4 +1,5 @@
 import { CorsMiddleware } from '@/shared/middlewares/cors.middleware';
+import { DocumentationMiddleware } from '@/shared/middlewares/documentation.middleware';
 import { LoggerMiddleware } from '@/shared/middlewares/logger.middleware';
 import { Application, Router } from 'express';
 import express from 'express';
@@ -23,6 +24,7 @@ export class Server {
   async start() {
     this.app.use(CorsMiddleware.middleware);
     this.app.use(LoggerMiddleware.middleware);
+    this.app.use('/api-doc', ...DocumentationMiddleware.middleware());
 
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
