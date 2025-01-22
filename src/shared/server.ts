@@ -1,8 +1,7 @@
 import { CorsMiddleware } from '@/shared/middlewares/cors.middleware';
 import { DocumentationMiddleware } from '@/shared/middlewares/documentation.middleware';
 import { LoggerMiddleware } from '@/shared/middlewares/logger.middleware';
-import { Application, Router } from 'express';
-import express from 'express';
+import express, { Router } from 'express';
 
 interface Options {
   port?: number;
@@ -32,6 +31,7 @@ export class Server {
     this.app.use(this.routes);
 
     this.app.listen(this.port, () => {
+      // eslint-disable-next-line no-console
       console.log(`Server is running on port ${this.port}`);
     });
   }

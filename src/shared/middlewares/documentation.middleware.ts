@@ -1,8 +1,7 @@
 import { documentation } from '@/config/documentation';
-import { NextFunction, Request, Response } from 'express';
-import swaggerUI from 'swagger-ui-express';
-import basicAuth from 'express-basic-auth';
 import { envs } from '@/config/envs';
+import basicAuth from 'express-basic-auth';
+import swaggerUI from 'swagger-ui-express';
 
 export class DocumentationMiddleware {
   static middleware() {

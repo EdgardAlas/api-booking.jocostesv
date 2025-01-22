@@ -1,5 +1,4 @@
 import { StatusCodes } from '@/config/status-codes';
-import { CustomError } from '@/shared/errors/custom-error';
 import { Request, Response } from 'express';
 
 export class NotFoundController {

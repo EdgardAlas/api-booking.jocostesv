@@ -38,6 +38,9 @@ importers:
       morgan:
         specifier: ^1.10.0
         version: 1.10.0
+      prisma-extension-pagination:
+        specifier: ^0.7.5
+        version: 0.7.5(@prisma/client@6.2.1(prisma@6.2.1))
       swagger-ui-express:
         specifier: ^5.0.1
         version: 5.0.1(express@4.21.2)
@@ -45,6 +48,12 @@ importers:
         specifier: ^3.24.1
         version: 3.24.1
     devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3.2.0
+        version: 3.2.0
+      '@eslint/js':
+        specifier: ^9.18.0
+        version: 9.18.0
       '@tsconfig/node22':
         specifier: ^22.0.0
         version: 22.0.0
@@ -1068,6 +1077,11 @@ packages:
     resolution: {integrity: sha512-e9MewbtFo+Fevyuxn/4rrcDAaq0IYxPGLvObpQjiZBMAzB9IGmzlnG9RZy3FFas+eBMu2vA0CszMeduow5dIuQ==}
     engines: {node: '>=14'}
     hasBin: true
+
+  prisma-extension-pagination@0.7.5:
+    resolution: {integrity: sha512-tMcdOKryuqMrErsf14bmTKPtv25jJ0Cr1799dCr6AXZukrKf7Jz7MEtFD9VUuh+swsq1dYYJQVvmLUlzgAObyA==}
+    peerDependencies:
+      '@prisma/client': ^4.9.0 || ^5.0.0 || ^6.0.0
 
   prisma@6.2.1:
     resolution: {integrity: sha512-hhyM0H13pQleQ+br4CkzGizS5I0oInoeTw3JfLw1BRZduBSQxPILlJLwi+46wZzj9Je7ndyQEMGw/n5cN2fknA==}
@@ -2369,6 +2383,10 @@ snapshots:
   prelude-ls@1.2.1: {}
 
   prettier@3.4.2: {}
+
+  prisma-extension-pagination@0.7.5(@prisma/client@6.2.1(prisma@6.2.1)):
+    dependencies:
+      '@prisma/client': 6.2.1(prisma@6.2.1)
 
   prisma@6.2.1:
     dependencies:
