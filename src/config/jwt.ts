@@ -4,7 +4,7 @@ import { envs } from './envs';
 export class JwtAdapter {
   static async generateToken(
     payload: string | Record<string, unknown> | Buffer,
-    duration: string = '2h'
+    duration: string = '8h'
   ): Promise<string> {
     return new Promise((resolve, reject) => {
       jwt.sign(

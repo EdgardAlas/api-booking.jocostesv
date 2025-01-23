@@ -145,3 +145,6 @@ dist
 
 # SQL
 *.sql
+
+# HTTP
+*.http
